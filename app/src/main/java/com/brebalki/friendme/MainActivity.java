@@ -12,13 +12,13 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends AppCompatActivity {
-    ContactInfo myContacts = new ContactInfo();
     // comment test eben
 //comment test Brandon
     //comment kiera edit
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ContactInfo myContacts = new ContactInfo();
         Context contxt = getApplicationContext();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

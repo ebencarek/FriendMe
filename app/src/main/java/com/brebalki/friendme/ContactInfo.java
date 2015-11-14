@@ -2,6 +2,8 @@
 // Version 0.01
 package com.brebalki.friendme;
 import java.util.ArrayList;
+
+import android.Manifest;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.Context;
@@ -12,6 +14,7 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.RawContacts;
+import android.support.v4.app.ActivityCompat;
 
 /**
  * This was created by Brandon on 11/14/2015.
