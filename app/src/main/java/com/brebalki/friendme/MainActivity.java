@@ -1,5 +1,6 @@
 package com.brebalki.friendme;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,13 +12,14 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    ContactInfo myContacts = new ContactInfo();
     // comment test eben
 //comment test Brandon
     //comment kiera edit
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Context contxt = getApplicationContext();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        myContacts.WritePhoneContact("JOOOOHHNNN CENA", "9999999999", contxt);
     }
 
     @Override
