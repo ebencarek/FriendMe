@@ -36,12 +36,28 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity implements CreateNdefMessageCallback{
 
+    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
+    private static final String TWITTER_KEY = "ojRm3zlTFPsiyzaE4gEyEChPE";
+    private static final String TWITTER_SECRET = "XMKzaN0iHf0d5XMiwxyCUPymTASfh0BBcHkT8nwSaLWQmlzFSx";
+
+
     private CallbackManager callbackManager;
     private Facebook fb = new Facebook();
-    private LoginButton loginButton;
+    private TwitterHandler tw = new TwitterHandler();
+    private LoginButton facebookLoginButton;
+    private TwitterLoginButton twitterLoginButton;
     private TextView textView;
     private AccessTokenTracker accessTokenTracker;
     public NdefMessage msg;
@@ -77,16 +93,19 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
         //Activate facebook sdk
         super.onCreate(savedInstanceState);
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig));
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         // register login callback
         callbackManager = CallbackManager.Factory.create();
 
         setContentView(R.layout.activity_main);
-        loginButton = (LoginButton) this.findViewById(R.id.login_button);
-        loginButton.setReadPermissions("user_friends");
 
-        loginButton.registerCallback(callbackManager,
+        facebookLoginButton = (LoginButton) this.findViewById(R.id.facebook_login_button);
+        facebookLoginButton.setReadPermissions("user_friends");
+
+        facebookLoginButton.registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
@@ -110,6 +129,19 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
                 fb.setAccessToken(currentAccessToken);
             }
         };
+
+        twitterLoginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                tw.loginSuccess(result);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.d("TW", exception.getLocalizedMessage());
+            }
+        });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -192,7 +224,9 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

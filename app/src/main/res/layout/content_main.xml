@@ -10,14 +10,21 @@
     tools:showIn="@layout/activity_main" tools:context=".MainActivity">
 
     <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
+        android:id="@+id/facebook_login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_above="@+id/button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="33dp" />
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp" />
 
+    <com.twitter.sdk.android.core.identity.TwitterLoginButton
+        android:id="@+id/twitter_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/facebook_login_button"/>
+
+    <TextView
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
