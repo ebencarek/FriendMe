@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
     private CallbackManager callbackManager;
     private Facebook fb = new Facebook();
-    private LoginButton loginButton;
+    private LoginButton facebookLoginButton;
     private TextView textView;
     private AccessTokenTracker accessTokenTracker;
     public NdefMessage msg;
@@ -74,10 +74,10 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         setContentView(R.layout.activity_main);
 
         textView = (TextView) this.findViewById(R.id.text_view);
-        loginButton = (LoginButton) this.findViewById(R.id.login_button);
-        loginButton.setReadPermissions("user_friends");
+        facebookLoginButton = (LoginButton) this.findViewById(R.id.facebook_login_button);
+        facebookLoginButton.setReadPermissions("user_friends");
 
-        loginButton.registerCallback(callbackManager,
+        facebookLoginButton.registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
