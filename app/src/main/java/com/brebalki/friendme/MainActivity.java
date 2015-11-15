@@ -274,7 +274,8 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Intent i = new Intent(this, SharingSettingsActivity.class);
+            startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);
