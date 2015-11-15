@@ -33,6 +33,7 @@ public class TwitterHandler {
 
     public void loginSuccess(Result<TwitterSession> result) {
         this.setTwitterSession(result.data);
+        Log.d("TW", "Twitter user ID " + result.data.getUserId());
     }
 
     public void sendFollow(long targetUserID) {
