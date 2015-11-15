@@ -38,6 +38,9 @@ public class Facebook {
 
     // creates and returns Intent that will open facebook to the target's profile
     public Intent openFacebookProfile(String userID, PackageManager pm) {
+
+        Log.d("FB", "Facebook user ID" + userID);
+
         String fbURL = "fb://profile/" + userID;
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(fbURL));
