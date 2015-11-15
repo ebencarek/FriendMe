@@ -1,5 +1,6 @@
 package com.brebalki.friendme;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -69,12 +70,29 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     public String constructPayload(){
         Context c = MainActivity.this;
         SharedPreferences sharedPref = c.getSharedPreferences("brebalki", Context.MODE_PRIVATE);
+        boolean[] share = new boolean[5];
+        String name, phone, email, facebook, twitter;
 
-        String name = sharedPref.getString("Name", "");
-        String phone = sharedPref.getString("Phone", "");
-        String email = sharedPref.getString("Email", "");
-        String facebook = fb.getAccessToken() != null ? fb.getAccessToken().getUserId() : "";
-        String twitter = tw.getTwitterSession() != null ? tw.getUserId() + "" : "";
+        share[0] = (sharedPref.getBoolean("nameShare", true));
+        share[1] = (sharedPref.getBoolean("numberShare", true));
+        share[2] = (sharedPref.getBoolean("emailShare", true));
+        share[3] = (sharedPref.getBoolean("facebookShare", true));
+        share[4] = (sharedPref.getBoolean("twitterShare", true));
+
+        name = share[0] ? sharedPref.getString("Name", "") : "";
+        phone = share[1] ? sharedPref.getString("Phone", "") : "";
+        email = share[2] ? sharedPref.getString("Email", "") : "";
+
+        if(share[3]) {
+            facebook = fb.getAccessToken() != null ? fb.getAccessToken().getUserId() : "";
+        }else {
+            facebook = "";
+        }
+        if(share[4]) {
+            twitter = tw.getTwitterSession() != null ? tw.getUserId() + "" : "";
+        }else{
+            twitter = "";
+        }
         String payload;
 
         payload = "NM" + name + "~PH" + phone + "~EM" + email + "~FB" + facebook + "~TW" + twitter;
@@ -145,14 +163,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         adapter = NfcAdapter.getDefaultAdapter(this);
 
         //I don't know if this needs to be here, but I think we should leave it for now
@@ -182,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     /**
      * Parses the NDEF Message from the intent and prints to recievedData
      */
-    void processIntent(Intent intent) {
+    public void processIntent(Intent intent) {
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
                 NfcAdapter.EXTRA_NDEF_MESSAGES);
         // only one message sent during the beam
@@ -214,6 +224,8 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
                 twitter = h.substring(2,h.length());
             }
         }
+
+        //add the recieving options junk
 
         if (fb.getAccessToken() != null && !facebook.equals("")) {
             fb.openFacebookProfile(facebook, getPackageManager());
@@ -250,7 +262,8 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Intent i = new Intent(this, SharingSettingsActivity.class);
+            startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);
