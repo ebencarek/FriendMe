@@ -26,6 +26,7 @@ public class Facebook {
 
     public void setAccessToken(AccessToken accessToken) {
         this.accessToken = accessToken;
+        this.profile = Profile.getCurrentProfile();
     }
 
     public AccessToken getAccessToken() {
