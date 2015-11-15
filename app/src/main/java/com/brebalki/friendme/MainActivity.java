@@ -173,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         myContacts = new ContactInfo();
         contxt = getApplicationContext();
     }
+
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         NdefRecord n = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, null, "PAYLOAD".getBytes());
