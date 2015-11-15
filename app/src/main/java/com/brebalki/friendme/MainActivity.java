@@ -47,8 +47,23 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     public NdefMessage msg;
     public TextView testing;
     NfcAdapter adapter;
-    String recievedData;
+    public ContactInfo myContacts;
+    public Context contxt;
 
+    public String constructPayload(){
+        Context c = MainActivity.this;
+        SharedPreferences sharedPref = c.getSharedPreferences("brebalki", Context.MODE_PRIVATE);
+
+        String name = sharedPref.getString("Name", "");
+        String phone = sharedPref.getString("Phone", "");
+        String email = sharedPref.getString("Email", "");
+        String facebook;
+        String payload;
+
+        payload = "NM" + name + "~PH" + phone + "~EM" + email + "~FB";
+
+        return payload;
+    }
     public void setBroadcastMessage(String payload){
         NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, null, payload.getBytes());
         NdefMessage message = new NdefMessage(record);
@@ -58,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        // Activate facebook sdk
+        //Activate facebook sdk
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
 
@@ -112,9 +127,10 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
             processIntent(getIntent());
         }
 
-        ContactInfo myContacts = new ContactInfo();
-        Context contxt = getApplicationContext();
-        myContacts.WritePhoneContact("Brandon Arbuthnot", "9999999999", contxt);
+        setBroadcastMessage(constructPayload());
+
+        myContacts = new ContactInfo();
+        contxt = getApplicationContext();
     }
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
@@ -139,8 +155,36 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         // only one message sent during the beam
         NdefMessage msg = (NdefMessage) rawMsgs[0];
         // record 0 contains the MIME type, record 1 is the AAR, if present
-        testing.setText(new String(msg.getRecords()[0].getPayload()));
-        recievedData = new String(msg.getRecords()[0].getPayload());
+        String output = new String(msg.getRecords()[0].getPayload());
+        String[] recievedData = output.split("[~]");
+
+        //Toast t = Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG);
+        //t.show();
+
+        String email, name, phone, facebook, twitter;
+        email = "";
+        name = "";
+        phone = "";
+        facebook = "";
+        twitter = "";
+        //Parse out the information
+        for(String h : recievedData){
+            if(h.substring(0,2).equals("NM") && !h.substring(2,h.length()).equals("")){
+                name = h.substring(2,h.length());
+            }else if(h.substring(0,2).equals("PH") && !h.substring(2,h.length()).equals("")){
+                phone = h.substring(2,h.length());
+            }else if(h.substring(0,2).equals("EM") && !h.substring(2,h.length()).equals("")){
+                email = h.substring(2,h.length());
+            }else if(h.substring(0,2).equals("FB") && !h.substring(2,h.length()).equals("")){
+                facebook = h.substring(2,h.length());
+            }else if(h.substring(0,2).equals("TW") && !h.substring(2,h.length()).equals("")){
+                twitter = h.substring(2,h.length());
+            }
+        }
+        //Test if these are null
+        myContacts = new ContactInfo();
+        contxt = getApplicationContext();
+        myContacts.WritePhoneContact(name, phone, contxt);
     }
 
     @Override
@@ -185,9 +229,11 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
         }
-
+        setBroadcastMessage(constructPayload());
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
+        myContacts = new ContactInfo();
+        contxt = getApplicationContext();
     }
 
     @Override
