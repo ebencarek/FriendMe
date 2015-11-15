@@ -123,12 +123,47 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
         setContentView(R.layout.activity_main);
 
-        // set facebook access token and twitter session if they already exist
-        AccessToken ac = AccessToken.getCurrentAccessToken();
-        fb.setAccessToken(ac);
+        configureFacebook();
+        configureTwitter();
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        adapter = NfcAdapter.getDefaultAdapter(this);
+
+        //I don't know if this needs to be here, but I think we should leave it for now
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+            processIntent(getIntent());
+        }
+
+        setBroadcastMessage(constructPayload());
+
+        myContacts = new ContactInfo();
+        contxt = getApplicationContext();
+    }
+
+    private void configureTwitter() {
         TwitterSession session = Twitter.getSessionManager().getActiveSession();
         tw.setTwitterSession(session);
+
+        twitterLoginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                tw.loginSuccess(result);
+                setBroadcastMessage(constructPayload());
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.d("TW", exception.getLocalizedMessage());
+            }
+        });
+    }
+
+    private void configureFacebook() {
+        AccessToken ac = AccessToken.getCurrentAccessToken();
+        fb.setAccessToken(ac);
 
         facebookLoginButton = (LoginButton) this.findViewById(R.id.facebook_login_button);
         facebookLoginButton.setReadPermissions("user_friends");
@@ -158,35 +193,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
                 fb.setAccessToken(currentAccessToken);
             }
         };
-
-        twitterLoginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
-        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-                tw.loginSuccess(result);
-                setBroadcastMessage(constructPayload());
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                Log.d("TW", exception.getLocalizedMessage());
-            }
-        });
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        adapter = NfcAdapter.getDefaultAdapter(this);
-
-        //I don't know if this needs to be here, but I think we should leave it for now
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-            processIntent(getIntent());
-        }
-
-        setBroadcastMessage(constructPayload());
-
-        myContacts = new ContactInfo();
-        contxt = getApplicationContext();
     }
 
     @Override

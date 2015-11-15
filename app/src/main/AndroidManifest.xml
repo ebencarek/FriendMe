@@ -41,6 +41,9 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="8593b86305b4f62fd8599db2a619da383e9f5179" />
+
+        <activity android:name=".SharingSettingsActivity">
+        </activity>
     </application>
 
 </manifest>
