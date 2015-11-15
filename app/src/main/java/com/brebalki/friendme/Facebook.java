@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 
 import java.util.List;
@@ -28,8 +31,20 @@ public class Facebook {
 
     public void loginSuccess(LoginResult loginResult) {
         Log.d("FB", "login success\n");
-        setAccessToken(loginResult.getAccessToken());
-        Log.d("FB", this.getAccessToken().getUserId());
+        //setAccessToken(loginResult.getAccessToken());
+        //Log.d("FB", this.getAccessToken().getUserId());
+
+        new GraphRequest(
+                loginResult.getAccessToken(),
+                "/me",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        Log.d("FB", "graph api response " + response.toString());
+                    }
+                }
+        ).executeAsync();
     }
 
     public void printCancel() {
