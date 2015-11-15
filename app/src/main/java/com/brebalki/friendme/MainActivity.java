@@ -66,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         callbackManager = CallbackManager.Factory.create();
 
         setContentView(R.layout.activity_main);
-
-        textView = (TextView) this.findViewById(R.id.text_view);
         loginButton = (LoginButton) this.findViewById(R.id.login_button);
         loginButton.setReadPermissions("user_friends");
 
@@ -136,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
      * Parses the NDEF Message from the intent and prints to recievedData
      */
     void processIntent(Intent intent) {
-        testing = (TextView) findViewById(R.id.testout);
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
                 NfcAdapter.EXTRA_NDEF_MESSAGES);
         // only one message sent during the beam
