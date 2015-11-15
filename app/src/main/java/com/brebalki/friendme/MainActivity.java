@@ -33,7 +33,13 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity implements CreateNdefMessageCallback{
@@ -45,7 +51,9 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
     private CallbackManager callbackManager;
     private Facebook fb = new Facebook();
+    private TwitterHandler tw = new TwitterHandler();
     private LoginButton facebookLoginButton;
+    private TwitterLoginButton twitterLoginButton;
     private TextView textView;
     private AccessTokenTracker accessTokenTracker;
     public NdefMessage msg;
@@ -73,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
         setContentView(R.layout.activity_main);
 
-        textView = (TextView) this.findViewById(R.id.text_view);
         facebookLoginButton = (LoginButton) this.findViewById(R.id.facebook_login_button);
         facebookLoginButton.setReadPermissions("user_friends");
 
@@ -101,6 +108,19 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
                 fb.setAccessToken(currentAccessToken);
             }
         };
+
+        twitterLoginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                tw.loginSuccess(result);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.d("TW", exception.getLocalizedMessage());
+            }
+        });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -150,7 +170,9 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
