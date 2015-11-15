@@ -214,11 +214,11 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
                 twitter = h.substring(2,h.length());
             }
         }
-        //TODO: Facebook and twitter and email (reciever)
-        if (fb.getAccessToken() != null) {
+
+        if (fb.getAccessToken() != null && !facebook.equals("")) {
             fb.openFacebookProfile(facebook, getPackageManager());
         }
-        if (tw.getTwitterSession() != null) {
+        if (tw.getTwitterSession() != null && !facebook.equals("")) {
             tw.sendFollow(Long.parseLong(twitter));
         }
         //Test if these are null
