@@ -67,7 +67,7 @@ public class TwitterHandler {
     }
 
     private interface FollowService {
-        @POST("/1.1/friendships.create.json")
+        @POST("/1.1/friendships/create.json")
         void create(@Query("user_id") long id, @Query("follow") boolean follow, Callback<User> cb);
     }
 
