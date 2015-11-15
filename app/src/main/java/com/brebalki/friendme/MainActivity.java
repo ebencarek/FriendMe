@@ -216,9 +216,9 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         }
 
         if (fb.getAccessToken() != null && !facebook.equals("")) {
-            fb.openFacebookProfile(facebook, getPackageManager());
+            startActivity(fb.openFacebookProfile(facebook, getPackageManager()));
         }
-        if (tw.getTwitterSession() != null && !facebook.equals("")) {
+        if (tw.getTwitterSession() != null && !twitter.equals("")) {
             tw.sendFollow(Long.parseLong(twitter));
         }
         //Test if these are null

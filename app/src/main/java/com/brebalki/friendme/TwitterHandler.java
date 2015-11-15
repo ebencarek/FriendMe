@@ -39,6 +39,9 @@ public class TwitterHandler {
         FMTwitterApiClient apiClient = new FMTwitterApiClient(this.getTwitterSession());
         FollowService followService = apiClient.getFollowService();
 
+        Log.d("TW", "Sender User ID: " + getUserId());
+
+
         followService.create(this.getUserId(), true, new Callback<User>() {
             @Override
             public void success(Result<User> result) {
@@ -47,7 +50,7 @@ public class TwitterHandler {
 
             @Override
             public void failure(TwitterException e) {
-
+                Log.d("TW", "Follow failure: " + e.getLocalizedMessage());
             }
         });
     }
