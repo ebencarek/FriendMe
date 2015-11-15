@@ -36,4 +36,13 @@
         android:onClick="launchUserInformation"
         android:text="Set Contact Information" />
 
+    <ImageView
+        android:id="@+id/nfctag"
+        android:layout_width="175dp"
+        android:layout_height="200dp"
+        android:src="@drawable/nfc"
+        android:layout_above="@+id/name"
+        android:layout_marginBottom="30dp"
+        android:layout_centerHorizontal="true"/>
+
 </RelativeLayout>
