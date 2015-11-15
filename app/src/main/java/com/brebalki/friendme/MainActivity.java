@@ -57,10 +57,12 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         String name = sharedPref.getString("Name", "");
         String phone = sharedPref.getString("Phone", "");
         String email = sharedPref.getString("Email", "");
-        String facebook;
+        //TODO: Facebook and twitter (sender)
+        String facebook = "";
+        String twitter = "";
         String payload;
 
-        payload = "NM" + name + "~PH" + phone + "~EM" + email + "~FB";
+        payload = "NM" + name + "~PH" + phone + "~EM" + email + "~FB" + facebook + "~TW" + twitter;
 
         return payload;
     }
@@ -181,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
                 twitter = h.substring(2,h.length());
             }
         }
+        //TODO: Facebook and twitter and email (reciever)
         //Test if these are null
         myContacts = new ContactInfo();
         contxt = getApplicationContext();
