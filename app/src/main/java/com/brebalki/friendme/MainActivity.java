@@ -119,15 +119,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        // Check to see that the Activity started due to an Android Beam
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-            processIntent(getIntent());
-        }
-    }
-
-    @Override
     public void onNewIntent(Intent intent) {
         // onResume gets called after this to handle the intent
         setIntent(intent);
@@ -178,8 +169,12 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     /* Facebook app activation and deactivation tracking */
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
+        // Check to see that the Activity started due to an Android Beam
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+            processIntent(getIntent());
+        }
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
