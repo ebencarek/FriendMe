@@ -41,16 +41,16 @@ public class Facebook {
 
         Log.d("FB", "Facebook user ID" + userID);
 
-        String fbURL = "fb://profile/" + userID;
+        String fbURL = "http://www.facebook.com/profile.php?id=" + userID;   //"fb://profile/" + userID;
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(fbURL));
-
-        List<ResolveInfo> list = pm.queryIntentActivities(intent, pm.MATCH_DEFAULT_ONLY);
-
-        if (list.size() == 0) {
-            String browserURL = "http://www.facebook.com/profile.php?id=" + userID;
-            intent.setData(Uri.parse(browserURL));
-        }
+//
+        //List<ResolveInfo> list = pm.queryIntentActivities(intent, pm.MATCH_DEFAULT_ONLY);
+//
+        //if (list.size() == 0) {
+        //    String browserURL = "http://www.facebook.com/profile.php?id=" + userID;
+        //    intent.setData(Uri.parse(browserURL));
+        //}
 
         Log.d("FB", "Facebook Intent URL " + intent.toString());
 
