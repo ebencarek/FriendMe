@@ -52,6 +52,8 @@ public class Facebook {
             intent.setData(Uri.parse(browserURL));
         }
 
+        Log.d("FB", "Facebook Intent URL " + intent.toString());
+
         return intent;
     }
 }
