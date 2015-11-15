@@ -25,7 +25,14 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     public NdefMessage msg;
     public TextView testing;
     NfcAdapter adapter;
+    String recievedData;
 
+    public void setBroadcastMessage(String payload){
+        NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, null, payload.getBytes());
+        NdefMessage message = new NdefMessage(record);
+        adapter = NfcAdapter.getDefaultAdapter(this);
+        adapter.setNdefPushMessage(message, this);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,16 +48,13 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
                         .setAction("Action", null).show();
             }
         });
-        Log.d("PLEASE", "ANYBODY");
         adapter = NfcAdapter.getDefaultAdapter(this);
-        //AAR OVERIDES TAG DISPATCH SYSTMS
+
+        //I don't know if this needs to be here, but I think we should leave it for now
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-            Log.d("Act launched by nfc", "it was i swear");
             processIntent(getIntent());
         }
-
     }
-
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         NdefRecord n = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, null, "PAYLOAD".getBytes());
@@ -64,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         super.onResume();
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-            Log.d("Act launched by nfc", "it was i swear");
             processIntent(getIntent());
         }
     }
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     }
 
     /**
-     * Parses the NDEF Message from the intent and prints to the TextView
+     * Parses the NDEF Message from the intent and prints to recievedData
      */
     void processIntent(Intent intent) {
         testing = (TextView) findViewById(R.id.testout);
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         NdefMessage msg = (NdefMessage) rawMsgs[0];
         // record 0 contains the MIME type, record 1 is the AAR, if present
         testing.setText(new String(msg.getRecords()[0].getPayload()));
-        Log.d(new String(msg.getRecords()[0].getPayload()), "Here it is");
+        recievedData = new String(msg.getRecords()[0].getPayload());
     }
 
     @Override
