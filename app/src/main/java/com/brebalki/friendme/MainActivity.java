@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookActivity;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
@@ -100,6 +101,13 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         callbackManager = CallbackManager.Factory.create();
 
         setContentView(R.layout.activity_main);
+
+        // set facebook access token and twitter session if they already exist
+        AccessToken ac = AccessToken.getCurrentAccessToken();
+        fb.setAccessToken(ac);
+
+        TwitterSession session = Twitter.getSessionManager().getActiveSession();
+        tw.setTwitterSession(session);
 
         facebookLoginButton = (LoginButton) this.findViewById(R.id.facebook_login_button);
         facebookLoginButton.setReadPermissions("user_friends");
