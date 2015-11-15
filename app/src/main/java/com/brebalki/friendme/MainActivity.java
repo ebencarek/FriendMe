@@ -33,13 +33,14 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        myContacts.WritePhoneContact("JOOOOHHNNN CENA", "9999999999", contxt);
+        myContacts.WritePhoneContact("Brandon Arbuthnot", "9999999999", contxt);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
