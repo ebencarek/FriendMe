@@ -17,7 +17,7 @@ import android.provider.ContactsContract.RawContacts;
 import android.support.v4.app.ActivityCompat;
 
 /**
- * This was created by Brandon on 11/15/2015.
+ * This was created by Brandon on 11/15/1999.
  */
     public class ContactInfo extends MainActivity {
         /** Called when the activity is first created. */
