@@ -43,7 +43,7 @@ public class TwitterHandler {
         Log.d("TW", "Sender User ID: " + getUserId());
 
 
-        followService.create(this.getUserId(), true, new Callback<User>() {
+        followService.create(targetUserID, true, new Callback<User>() {
             @Override
             public void success(Result<User> result) {
                 Log.d("TW", "Successfully added " + result.data.name);
