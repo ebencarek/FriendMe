@@ -32,8 +32,16 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity implements CreateNdefMessageCallback{
+
+    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
+    private static final String TWITTER_KEY = "ojRm3zlTFPsiyzaE4gEyEChPE";
+    private static final String TWITTER_SECRET = "XMKzaN0iHf0d5XMiwxyCUPymTASfh0BBcHkT8nwSaLWQmlzFSx";
+
 
     private CallbackManager callbackManager;
     private Facebook fb = new Facebook();
@@ -56,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
         // Activate facebook sdk
         super.onCreate(savedInstanceState);
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig));
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         // register login callback
