@@ -40,33 +40,23 @@ public class Facebook {
     public void loginSuccess(LoginResult loginResult) {
         Log.d("FB", "login success\n");
         setAccessToken(loginResult.getAccessToken());
-        Log.d("FB", "APP specific user id: " + this.getAccessToken().getUserId());
 
         profile = Profile.getCurrentProfile();
 
-        Log.d("FB", "Profile user id: " + profile.getId());
         Log.d("FB", "Profile uri: " + profile.getLinkUri().toString());
     }
 
     public void printCancel() {
-        Log.d("FB", "login cancel\n");
+        Log.d("FB", "login cancel");
     }
 
     // creates and returns Intent that will open facebook to the target's profile
-    public Intent openFacebookProfile(String userID, PackageManager pm) {
+    public Intent openFacebookProfile(String uriString, PackageManager pm) {
 
-        Log.d("FB", "Facebook user ID" + userID);
+        Log.d("FB", "Target acebook uri String" + uriString);
 
-        String fbURL = "http://www.facebook.com/profile.php?id=" + userID;   //"fb://profile/" + userID;
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(fbURL));
-//
-        //List<ResolveInfo> list = pm.queryIntentActivities(intent, pm.MATCH_DEFAULT_ONLY);
-//
-        //if (list.size() == 0) {
-        //    String browserURL = "http://www.facebook.com/profile.php?id=" + userID;
-        //    intent.setData(Uri.parse(browserURL));
-        //}
+        intent.setData(Uri.parse(uriString));
 
         Log.d("FB", "Facebook Intent URL " + intent.toString());
 
