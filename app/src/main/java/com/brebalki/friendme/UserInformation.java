@@ -44,6 +44,7 @@ public class UserInformation extends AppCompatActivity {
         em = email.getText().toString();
 
         //Save to the shared preferences
+        editor.putString("Name", name.getText().toString());
         if(!na.equals("")) {
             editor.putString("Name", name.getText().toString());
         }
