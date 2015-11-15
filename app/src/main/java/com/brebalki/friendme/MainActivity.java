@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -24,10 +26,11 @@ import com.facebook.login.widget.LoginButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    CallbackManager callbackManager;
-    Facebook fb = new Facebook();
-    LoginButton loginButton;
-    TextView textView;
+    private CallbackManager callbackManager;
+    private Facebook fb = new Facebook();
+    private LoginButton loginButton;
+    private TextView textView;
+    private AccessTokenTracker accessTokenTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         textView = (TextView) this.findViewById(R.id.text_view);
         loginButton = (LoginButton) this.findViewById(R.id.login_button);
+        loginButton.setReadPermissions("user_friends");
 
         loginButton.registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -61,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
                         // App code
                     }
                 });
+
+        accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                fb.setAccessToken(currentAccessToken);
+            }
+        };
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -119,5 +130,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 }
