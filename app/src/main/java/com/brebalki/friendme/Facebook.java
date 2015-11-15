@@ -7,9 +7,11 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.facebook.AccessToken;
+import com.facebook.FacebookActivity;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 public class Facebook {
 
     private AccessToken accessToken;
+    private Profile profile;
 
     public void setAccessToken(AccessToken accessToken) {
         this.accessToken = accessToken;
@@ -29,22 +32,19 @@ public class Facebook {
         return this.accessToken;
     }
 
+    public Profile getProfile() {
+        return profile;
+    }
+
     public void loginSuccess(LoginResult loginResult) {
         Log.d("FB", "login success\n");
-        //setAccessToken(loginResult.getAccessToken());
-        //Log.d("FB", this.getAccessToken().getUserId());
+        setAccessToken(loginResult.getAccessToken());
+        Log.d("FB", "APP specific user id: " + this.getAccessToken().getUserId());
 
-        new GraphRequest(
-                loginResult.getAccessToken(),
-                "/me",
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-                        Log.d("FB", "graph api response " + response.toString());
-                    }
-                }
-        ).executeAsync();
+        profile = Profile.getCurrentProfile();
+
+        Log.d("FB", "Profile user id: " + profile.getId());
+        Log.d("FB", "Profile uri: " + profile.getLinkUri().toString());
     }
 
     public void printCancel() {

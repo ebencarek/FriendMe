@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         String name = sharedPref.getString("Name", "");
         String phone = sharedPref.getString("Phone", "");
         String email = sharedPref.getString("Email", "");
-        String facebook = fb.getAccessToken() != null ? fb.getAccessToken().getUserId() : "";
+        String facebook = fb.getAccessToken() != null ? fb.getProfile().getLinkUri().toString() : "";
         String twitter = tw.getTwitterSession() != null ? tw.getUserId() + "" : "";
         String payload;
 
