@@ -73,9 +73,8 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         String name = sharedPref.getString("Name", "");
         String phone = sharedPref.getString("Phone", "");
         String email = sharedPref.getString("Email", "");
-        //TODO: Facebook and twitter (sender)
-        String facebook = "";
-        String twitter = "";
+        String facebook = fb.getAccessToken() != null ? fb.getAccessToken().getUserId() : "";
+        String twitter = tw.getTwitterSession() != null ? tw.getUserId() + "" : "";
         String payload;
 
         payload = "NM" + name + "~PH" + phone + "~EM" + email + "~FB" + facebook + "~TW" + twitter;
@@ -216,6 +215,12 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
             }
         }
         //TODO: Facebook and twitter and email (reciever)
+        if (fb.getAccessToken() != null) {
+            fb.openFacebookProfile(facebook, getPackageManager());
+        }
+        if (tw.getTwitterSession() != null) {
+            tw.sendFollow(Long.parseLong(twitter));
+        }
         //Test if these are null
         myContacts = new ContactInfo();
         contxt = getApplicationContext();
@@ -284,6 +289,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        accessTokenTracker.stopTracking();
     }
 }
