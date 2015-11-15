@@ -21,11 +21,12 @@ import android.support.v4.app.ActivityCompat;
  */
     public class ContactInfo extends MainActivity {
         /** Called when the activity is first created. */
-        public void WritePhoneContact(String displayName, String number,Context cntx /*App or Activity Ctx*/)
+        public void WritePhoneContact(String displayName, String number, String email, Context cntx /*App or Activity Ctx*/)
         {
             Context contetx = cntx; //Application's context or Activity's context
             String strDisplayName 	=  displayName; // Name of the Person to add
             String strNumber 	=  number; //number of the person to add with the Contact
+            String strEmail = email; //email of the person to add with the Contact
 
             ArrayList<ContentProviderOperation> cntProOper = new ArrayList<ContentProviderOperation>();
             int contactIndex = cntProOper.size();//ContactSize
@@ -38,16 +39,27 @@ import android.support.v4.app.ActivityCompat;
 
             //Display name will be inserted in ContactsContract.Data table
             cntProOper.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)//Step2
-                    .withValueBackReference(Data.RAW_CONTACT_ID,contactIndex)
+                    .withValueBackReference(Data.RAW_CONTACT_ID, contactIndex)
                     .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
                     .withValue(StructuredName.DISPLAY_NAME, strDisplayName) // Name of the contact
                     .build());
             //Mobile number will be inserted in ContactsContract.Data table
             cntProOper.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)//Step 3
-                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID,contactIndex)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, contactIndex)
                     .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
                     .withValue(Phone.NUMBER, strNumber) // Number to be added
                     .withValue(Phone.TYPE, Phone.TYPE_MOBILE).build()); //Type like HOME, MOBILE etc
+            //Display name will be inserted in ContactsContract.Data table
+            if (strEmail != null) {
+                cntProOper.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                        .withValue(ContactsContract.Data.MIMETYPE,
+                                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                        .withValue(ContactsContract.CommonDataKinds.Email.DATA, strEmail)
+                        .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK)
+                        .build());
+            }
+
             try
             {
                 // We will do batch operation to insert all above data

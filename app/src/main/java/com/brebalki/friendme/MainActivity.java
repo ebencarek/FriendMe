@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         //Test if these are null
         myContacts = new ContactInfo();
         contxt = getApplicationContext();
-        myContacts.WritePhoneContact(name, phone, contxt);
+        myContacts.WritePhoneContact(name, phone, email, contxt);
     }
 
     @Override
