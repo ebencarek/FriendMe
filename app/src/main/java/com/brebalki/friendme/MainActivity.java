@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Context;
-import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -117,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         fb.loginSuccess(loginResult);
+                        setBroadcastMessage(constructPayload());
                     }
 
                     @Override
@@ -142,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
             @Override
             public void success(Result<TwitterSession> result) {
                 tw.loginSuccess(result);
+                setBroadcastMessage(constructPayload());
             }
 
             @Override
