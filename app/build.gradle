@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 //This is a test of the properties and application of github version control.
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '22.0.1'
 
     defaultConfig {
         applicationId "com.brebalki.friendme"
