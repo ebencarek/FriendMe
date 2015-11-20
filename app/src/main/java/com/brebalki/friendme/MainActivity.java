@@ -1,34 +1,28 @@
 package com.brebalki.friendme;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.Context;
-import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
-import android.view.View;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 import android.view.View;
-import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookActivity;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
@@ -50,8 +44,12 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     private static final String TWITTER_KEY = "ojRm3zlTFPsiyzaE4gEyEChPE";
     private static final String TWITTER_SECRET = "XMKzaN0iHf0d5XMiwxyCUPymTASfh0BBcHkT8nwSaLWQmlzFSx";
-
-
+    public NdefMessage msg;
+    public TextView testing;
+    public ContactInfo myContacts;
+    public Context contxt;
+    public SelectDataDialogFragment getData;
+    NfcAdapter adapter;
     private CallbackManager callbackManager;
     private Facebook fb = new Facebook();
     private TwitterHandler tw = new TwitterHandler();
@@ -59,11 +57,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
     private TwitterLoginButton twitterLoginButton;
     private TextView textView;
     private AccessTokenTracker accessTokenTracker;
-    public NdefMessage msg;
-    public TextView testing;
-    NfcAdapter adapter;
-    public ContactInfo myContacts;
-    public Context contxt;
 
     public String constructPayload(){
         Context c = MainActivity.this;
@@ -160,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
             }
         });
     }
-
     private void configureFacebook() {
         AccessToken ac = AccessToken.getCurrentAccessToken();
         fb.setAccessToken(ac);
@@ -208,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         // onResume gets called after this to handle the intent
         setIntent(intent);
     }
-
     /**
      * Parses the NDEF Message from the intent and prints to recievedData
      */
@@ -221,8 +212,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         String output = new String(msg.getRecords()[0].getPayload());
         String[] recievedData = output.split("[~]");
 
-        //Toast t = Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG);
-        //t.show();
 
         String email, name, phone, facebook, twitter;
         email = "";
@@ -245,16 +234,112 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
             }
         }
 
-        if (fb.getAccessToken() != null && !facebook.equals("")) {
+        //This segment doesn't follow proper encapsulation rules or whatever, but it works well enough
+        //Will be moved to its own function "soon"
+        getData = new SelectDataDialogFragment();
+        /*
+        items[0] = "Name";
+        items[1] = "Phone Number";
+        items[2] = "Email Address";
+        items[3] = "Twitter";
+        items[4] = "Facebook";
+        */
+
+        //Remove stuff from the items array based on if you received the information
+        int r = 5;
+        if (name.equals("")) {
+            getData.items[0] = "";
+            r--;
+        }
+        if (phone.equals("")) {
+            getData.items[1] = "";
+            r--;
+        }
+        if (email.equals("")) {
+            getData.items[2] = "";
+            r--;
+        }
+        if (twitter.equals("")) {
+            getData.items[3] = "";
+            r--;
+        }
+        if (facebook.equals("")) {
+            getData.items[4] = "";
+            r--;
+        }
+
+        //Only allow the user to select from items which they have recieved
+        getData.endItems = new String[r];
+        r = 0;
+        for (int q = 0; q < getData.items.length; q++, r++) {
+            if (getData.items[q].equals("")) {
+                r--;
+            } else {
+                getData.endItems[r] = getData.items[q];
+            }
+        }
+
+        // Specify the list array, the items to be selected by default (null for none),
+        // and the listener through which to receive callbacks when items are selected
+        //Normally this would belong in the SelectDataDialogFragment object
+        //This might behave strangely...
+        getData.builder.setMultiChoiceItems(getData.endItems, null, //Non - null for different defaults
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which,
+                                        boolean isChecked) {
+                        if (isChecked) {
+                            // If the user checked the item, add it to the selected items
+                            getData.mSelectedItems.add(getData.endItems[which]);
+                        } else if (getData.mSelectedItems.contains(getData.endItems[which])) {
+                            // Else, if the item is already in the array, remove it
+                            getData.mSelectedItems.remove(getData.endItems[which]);
+                        }
+                    }
+                });
+        getData.show(this.getFragmentManager(), "tag");
+
+        //With the getData Alert Dialog object, !THING.equals("") is probably redundant (included in the mSelectedItems creation)
+        if (fb.getAccessToken() != null && !facebook.equals("") && getData.mSelectedItems.contains("Facebook")) {
             startActivity(fb.openFacebookProfile(facebook, getPackageManager()));
         }
-        if (tw.getTwitterSession() != null && !twitter.equals("")) {
+        if (tw.getTwitterSession() != null && !twitter.equals("") && getData.mSelectedItems.contains("Twitter")) {
             tw.sendFollow(Long.parseLong(twitter));
         }
-        //Test if these are null
+
         myContacts = new ContactInfo();
         contxt = getApplicationContext();
-        myContacts.WritePhoneContact(name, phone, email, contxt);
+        //Add the relevant contact information
+        if (getData.mSelectedItems.contains("Name")) {
+            if (getData.mSelectedItems.contains("Phone Number")) {
+                if (getData.mSelectedItems.contains("Email Address")) {
+                    myContacts.WritePhoneContact(name, phone, email, contxt);
+                } else {
+                    myContacts.WritePhoneContact(name, phone, "", contxt);
+                }
+            } else {
+                if (getData.mSelectedItems.contains("Email Address")) {
+                    myContacts.WritePhoneContact(name, "", email, contxt);
+                } else {
+                    myContacts.WritePhoneContact(name, "", "", contxt);
+                }
+            }
+        } else {
+            if (getData.mSelectedItems.contains("Phone Number")) {
+                if (getData.mSelectedItems.contains("Email Address")) {
+                    myContacts.WritePhoneContact("", phone, email, contxt);
+                } else {
+                    myContacts.WritePhoneContact("", phone, "", contxt);
+                }
+            } else {
+                if (getData.mSelectedItems.contains("Email Address")) {
+                    myContacts.WritePhoneContact("", "", email, contxt);
+                } else {
+                    Toast t = Toast.makeText(contxt, "No contact information received", Toast.LENGTH_SHORT);
+                    t.show();
+                }
+            }
+        }
     }
 
     @Override
@@ -270,7 +355,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -286,12 +370,10 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
 
         return super.onOptionsItemSelected(item);
     }
-
     public void launchUserInformation(View view){
         Intent i = new Intent(this, UserInformation.class);
         startActivity(i);
     }
-
 
     /* Facebook app activation and deactivation tracking */
 
@@ -308,7 +390,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         myContacts = new ContactInfo();
         contxt = getApplicationContext();
     }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -316,7 +397,6 @@ public class MainActivity extends AppCompatActivity implements CreateNdefMessage
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
